@@ -75,6 +75,7 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
     public void transitiontosocialmediaactivity()
     {
         Intent intent=new Intent(LogIn.this,SocialMediaActiviry.class);
+        finish();
         startActivity(intent);
     }
 }

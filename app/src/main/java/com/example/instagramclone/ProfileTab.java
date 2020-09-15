@@ -1,5 +1,7 @@
 package com.example.instagramclone;
 
+import android.app.ProgressDialog;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +9,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +24,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProfileTab extends Fragment {
+
+    private EditText edtProfileName,edtProfileAge,edtProfileProfession,edtProfileHobby,edtProfileBio;
+    private Button btnProfileSubmit;
+    final ParseUser parseUser=ParseUser.getCurrentUser();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +73,71 @@ public class ProfileTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_tab, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile_tab, container, false);
+        btnProfileSubmit=view.findViewById(R.id.btnProfileSubmit);
+        edtProfileName=view.findViewById(R.id.edtProfileName);
+        edtProfileAge=view.findViewById(R.id.edtProfileAge);
+        edtProfileBio=view.findViewById(R.id.edtProfileBio);
+        edtProfileHobby=view.findViewById(R.id.edtProfileHobby);
+        edtProfileProfession=view.findViewById(R.id.edtProfileProfession);
+        if (parseUser.get("Name")==null){
+                edtProfileName.setText("");
+            }
+        else
+            {
+                edtProfileName.setText(parseUser.get("Name") + "");
+            }
+        if (parseUser.get("Age")==null){
+                edtProfileAge.setText("");
+            }
+        else {
+                edtProfileAge.setText(parseUser.get("Age") + "");
+            }
+        if (parseUser.get("Bio")==null){
+                edtProfileBio.setText("");
+            }
+        else {
+                edtProfileBio.setText(parseUser.get("Bio") + "");
+            }
+        if (parseUser.get("Hobby")==null){
+                edtProfileHobby.setText("");
+            }
+        else {
+                edtProfileHobby.setText(parseUser.get("Hobby") + "");
+            }
+        if (parseUser.get("Profession")==null){
+                edtProfileProfession.setText("");
+            }
+        else {
+                edtProfileProfession.setText(parseUser.get("Profession") + "");
+            }
+
+        btnProfileSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ProgressDialog progressDialog=new ProgressDialog(getContext());
+                progressDialog.setMessage("Saving");
+                progressDialog.show();
+                parseUser.put("Name",edtProfileName.getText().toString());
+                parseUser.put("Age",edtProfileAge.getText().toString());
+                parseUser.put("Bio",edtProfileBio.getText().toString());
+                parseUser.put("Profession",edtProfileProfession.getText().toString());
+                parseUser.put("Hobby",edtProfileHobby.getText().toString());
+                parseUser.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null)
+                        {
+                            Toast.makeText(getContext(),edtProfileName.getText().toString()+" Saved sucessfully",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                        progressDialog.cancel();
+                    }
+                });
+            }
+        });
+        return view;
     }
 }
