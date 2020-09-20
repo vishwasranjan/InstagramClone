@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
@@ -80,6 +81,7 @@ public class ProfileTab extends Fragment {
         edtProfileBio=view.findViewById(R.id.edtProfileBio);
         edtProfileHobby=view.findViewById(R.id.edtProfileHobby);
         edtProfileProfession=view.findViewById(R.id.edtProfileProfession);
+        ParseObject parseObject=new ParseObject("Profile");
         if (parseUser.get("Name")==null){
                 edtProfileName.setText("");
             }

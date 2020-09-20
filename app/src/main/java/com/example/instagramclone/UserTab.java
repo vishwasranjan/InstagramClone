@@ -1,12 +1,27 @@
 package com.example.instagramclone;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +29,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class UserTab extends Fragment {
+    ListView listView;
+    ArrayList arrayList;
+    ArrayAdapter arrayAdapter;
+    TextView textViewData;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +78,29 @@ public class UserTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_tab, container, false);
+        View view= inflater.inflate(R.layout.fragment_user_tab, container, false);
+        listView=view.findViewById(R.id.listview);
+        textViewData=view.findViewById(R.id.textView2);
+        String msg="";
+        arrayList=new ArrayList();
+        arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,arrayList);
+        ParseQuery<ParseUser> parseQuery=ParseUser.getQuery();
+        parseQuery.whereNotEqualTo("username",ParseUser.getCurrentUser());
+        parseQuery.findInBackground(new FindCallback<ParseUser>() {
+           @Override
+           public void done(List<ParseUser> objects, ParseException e) {
+               if (e==null)
+               {
+                   for (ParseUser user:objects)
+                   {
+                    arrayList.add(user.getUsername());
+                   }
+                   listView.setAdapter(arrayAdapter);
+                   textViewData.animate().alpha(0).setDuration(2000);
+                   listView.setVisibility(View.VISIBLE);
+               }
+           }
+       });
+        return view;
     }
 }
