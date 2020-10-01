@@ -37,7 +37,7 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
         switch (view.getId()){
             case R.id.btn_login:
                 final ProgressDialog progressDialog=new ProgressDialog(LogIn.this);
-                progressDialog.setMessage("Signing in "+edtUsername.getText().toString());
+                progressDialog.setMessage("Logging in "+edtUsername.getText().toString());
                 progressDialog.show();
                 ParseUser.logInInBackground(edtUsername.getText().toString(), edtPassword.getText().toString(), new LogInCallback() {
                     @Override
@@ -57,6 +57,7 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.btn_signin:
                 Intent intentlogin=new Intent(LogIn.this,SignUp.class);
+                finish();
                 startActivity(intentlogin);
                 break;
         }

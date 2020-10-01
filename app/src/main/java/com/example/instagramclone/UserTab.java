@@ -1,6 +1,7 @@
 package com.example.instagramclone;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +30,7 @@ import java.util.List;
  * Use the {@link UserTab#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UserTab extends Fragment {
+public class UserTab extends Fragment implements AdapterView.OnItemClickListener {
     ListView listView;
     ArrayList arrayList;
     ArrayAdapter arrayAdapter;
@@ -84,6 +86,7 @@ public class UserTab extends Fragment {
         String msg="";
         arrayList=new ArrayList();
         arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,arrayList);
+        listView.setOnItemClickListener(UserTab.this);
         ParseQuery<ParseUser> parseQuery=ParseUser.getQuery();
         parseQuery.whereNotEqualTo("username",ParseUser.getCurrentUser());
         parseQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -102,5 +105,12 @@ public class UserTab extends Fragment {
            }
        });
         return view;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent=new Intent(getContext(),UserPost.class);
+        intent.putExtra("Username",arrayList.get(position)+"");
+        startActivity(intent);
     }
 }

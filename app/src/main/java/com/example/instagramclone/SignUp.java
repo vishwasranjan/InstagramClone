@@ -61,9 +61,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                             if (e == null) {
                                 Toast.makeText(SignUp.this, edtUsername.getText().toString() + " is siggned up sucessfully", Toast.LENGTH_SHORT).show();
                                 transitiontosocialmediaactivity();
-                            } else {
+                            } else
+                                {
                                 Toast.makeText(SignUp.this, "There was an error" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                                }
                             progressDialog.cancel();
                         }
                     });
@@ -71,6 +72,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                 break;
             case R.id.btnLogin:
                 Intent intentlogin=new Intent(SignUp.this, LogIn.class);
+                finish();
                 startActivity(intentlogin);
                 break;
         }
