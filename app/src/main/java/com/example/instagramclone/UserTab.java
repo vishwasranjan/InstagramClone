@@ -1,6 +1,8 @@
 package com.example.instagramclone;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -30,7 +33,7 @@ import java.util.List;
  * Use the {@link UserTab#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UserTab extends Fragment implements AdapterView.OnItemClickListener {
+public class UserTab extends Fragment implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener {
     ListView listView;
     ArrayList arrayList;
     ArrayAdapter arrayAdapter;
@@ -87,6 +90,7 @@ public class UserTab extends Fragment implements AdapterView.OnItemClickListener
         arrayList=new ArrayList();
         arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,arrayList);
         listView.setOnItemClickListener(UserTab.this);
+        listView.setOnItemLongClickListener(UserTab.this);
         ParseQuery<ParseUser> parseQuery=ParseUser.getQuery();
         parseQuery.whereNotEqualTo("username",ParseUser.getCurrentUser());
         parseQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -112,5 +116,41 @@ public class UserTab extends Fragment implements AdapterView.OnItemClickListener
         Intent intent=new Intent(getContext(),UserPost.class);
         intent.putExtra("Username",arrayList.get(position)+"");
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(final AdapterView<?> parent, View view, int position, long id) {
+        final ParseQuery<ParseUser> parseQuery=ParseUser.getQuery();
+        parseQuery.whereEqualTo("username",arrayList.get(position));
+       parseQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+           @Override
+           public void done(ParseUser object, ParseException e) {
+               if (object!=null&& e==null)
+               {
+                    //Toast.makeText(getContext(),object.get("Profession")+"",Toast.LENGTH_SHORT).show();
+                   final AlertDialog.Builder alertDialog=new AlertDialog.Builder(getContext())
+                           .setTitle(object.getUsername()+"'s Detail")
+                           .setMessage("Name - "+object.get("Name")+"\n"
+                           +"Username - "+object.get("username")+"\n"
+                           +"Profession"+object.get("Profession")+"\n"
+                           +"Bio - "+object.get("Bio")+"\n"
+                           +"Hobby - "+object.get("Hobby"));
+                   alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           dialog.dismiss();
+                       }
+                   });
+                   alertDialog.setCancelable(false);
+                   alertDialog.setIcon(R.drawable.people);
+                   alertDialog.show();
+
+               }
+               else {
+                   Toast.makeText(getContext(),"Nothing to show",Toast.LENGTH_SHORT).show();
+               }
+           }
+       });
+        return true;
     }
 }
